@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<screen-config xmlns="http://schemas.haulmont.com/cuba/screens.xsd">
+    <screen id="ceut$Customer.browse"
+            template="de/diedavids/cuba/ceut/web/customer/customer-browse.xml"/>
+    <screen id="ceut$Customer.edit"
+            template="de/diedavids/cuba/ceut/web/customer/customer-edit.xml"/>
+    <screen id="ceut$Order.browse"
+            template="de/diedavids/cuba/ceut/web/order/order-browse.xml"/>
+    <screen id="ceut$Order.edit"
+            template="de/diedavids/cuba/ceut/web/order/order-edit.xml"/>
+</screen-config>
