@@ -1,6 +1,6 @@
 
 buildscript {
-    ext.cubaVersion = '6.9.2'
+    ext.cubaVersion = '6.10.6'
     repositories {
         
         mavenLocal()
@@ -10,6 +10,9 @@ buildscript {
                 username(rootProject.hasProperty('repoUser') ? rootProject['repoUser'] : 'cuba')
                 password(rootProject.hasProperty('repoPass') ? rootProject['repoPass'] : 'cuba123')
             }
+        }
+        maven {
+            url  "https://dl.bintray.com/mariodavid/cuba-components"
         }
         
     }
@@ -46,7 +49,7 @@ cuba {
 
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
-    appComponent("de.diedavids.cuba.taggable:taggable-global:0.1-SNAPSHOT")
+    appComponent("de.diedavids.cuba.taggable:taggable-global:0.3.0")
 
 }
 
@@ -82,7 +85,9 @@ configure([globalModule, coreModule, webModule]) {
 }
 
 configure(globalModule) {
-    task enhance(type: CubaEnhancing)
+    entitiesEnhancing {
+        main { enabled = true }
+    }
 
     
 }
