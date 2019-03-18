@@ -1,6 +1,14 @@
 package de.diedavids.cuba.ceut.web.order
 
-import com.haulmont.cuba.gui.components.AbstractLookup
+import de.balvi.cuba.declarativecontrollers.web.browse.AnnotatableAbstractLookup
+import de.diedavids.cuba.taggable.web.WithTags
 
-class OrderBrowse extends AbstractLookup {
+@WithTags(
+        listComponent = "ordersTable",
+        tagContext = "orderSize",
+        showTagsInList = true,
+        showTagsAsLink = true,
+        tagLinkOpenType = "NEW_TAB"
+)
+class OrderBrowse extends AnnotatableAbstractLookup {
 }

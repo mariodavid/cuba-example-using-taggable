@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.chile.core.annotations.NamePattern;
 
-@NamePattern("%s %s|customer,orderDate")
+@NamePattern("%s|orderDate")
 @Table(name = "CEUT_ORDER")
 @Entity(name = "ceut$Order")
 public class Order extends StandardEntity {
