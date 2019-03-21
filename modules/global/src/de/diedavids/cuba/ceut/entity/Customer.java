@@ -1,15 +1,16 @@
 package de.diedavids.cuba.ceut.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Column;
-import com.haulmont.cuba.core.entity.StandardEntity;
-import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.chile.core.annotations.Composition;
+import com.haulmont.chile.core.annotations.NamePattern;
+import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.OnDelete;
 import com.haulmont.cuba.core.global.DeletePolicy;
-import java.util.List;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.util.List;
 
 @NamePattern("%s|name")
 @Table(name = "CEUT_CUSTOMER")
@@ -24,6 +25,17 @@ public class Customer extends StandardEntity {
     @OnDelete(DeletePolicy.CASCADE)
     @OneToMany(mappedBy = "customer")
     protected List<Order> orders;
+
+    @OneToMany(mappedBy = "customer")
+    protected List<PersistentTagging> taggings;
+
+    public List<PersistentTagging> getTaggings() {
+        return taggings;
+    }
+
+    public void setTaggings(List<PersistentTagging> taggings) {
+        this.taggings = taggings;
+    }
 
     public void setOrders(List<Order> orders) {
         this.orders = orders;
