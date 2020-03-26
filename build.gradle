@@ -1,18 +1,18 @@
 
 buildscript {
-    ext.cubaVersion = '7.1.0'
+    ext.cubaVersion = '7.2.1'
     repositories {
-        
+
         mavenLocal()
+        maven {
+            url  "https://dl.bintray.com/mariodavid/cuba-components"
+        }
         maven {
             url 'https://repo.cuba-platform.com/content/groups/work'
             credentials {
                 username(rootProject.hasProperty('repoUser') ? rootProject['repoUser'] : 'cuba')
                 password(rootProject.hasProperty('repoPass') ? rootProject['repoPass'] : 'cuba123')
             }
-        }
-        maven {
-            url  "https://dl.bintray.com/mariodavid/cuba-components"
         }
     }
     dependencies {
@@ -47,7 +47,7 @@ cuba {
 
 dependencies {
     appComponent("com.haulmont.cuba:cuba-global:$cubaVersion")
-    appComponent("de.diedavids.cuba.taggable:taggable-global:0.4.1-SNAPSHOT")
+    appComponent("de.diedavids.cuba.taggable:taggable-global:0.6.0")
 
 }
 
@@ -76,12 +76,22 @@ configure([globalModule, coreModule, webModule]) {
     apply(plugin: 'groovy')
 
     sourceSets {
-        main { groovy { srcDirs = ["src"] } }
-        test { groovy { srcDirs = ["test"] } }
+        main {
+            groovy { srcDirs = ["src"] }
+            // new config
+            java.outputDir = new File(project.buildDir, "classes/main")
+            groovy.outputDir = new File(project.buildDir, "classes/main")
+        }
+        test {
+            groovy { srcDirs = ["test"] }
+            // new config
+            java.outputDir = new File(project.buildDir, "classes/test")
+            groovy.outputDir = new File(project.buildDir, "classes/test")
+        }
     }
 
-    sourceSets.main.output.classesDir = new File(project.buildDir, "classes/main")
-    sourceSets.test.output.classesDir = new File(project.buildDir, "classes/test")
+    sourceSets.main.output.classesDirs.setFrom(new File(project.buildDir, "classes/main"))
+    sourceSets.test.output.classesDirs.setFrom(new File(project.buildDir, "classes/test"))
 }
 
 configure(globalModule) {
@@ -113,15 +123,8 @@ configure(coreModule) {
 
     }
 
-    task cleanConf(description: 'Cleans up conf directory') {
-        doLast {
-            def dir = new File(cuba.tomcat.dir, "/conf/${modulePrefix}-core")
-            if (dir.isDirectory()) {
-                ant.delete(includeemptydirs: true) {
-                    fileset(dir: dir, includes: '**/*', excludes: 'local.app.properties')
-                }
-            }
-        }
+    task cleanConf(description: 'Cleans up conf directory', type: Delete) {
+        delete "$cuba.appHome/${modulePrefix}-core/conf"
     }
 
     task deploy(dependsOn: [assemble, cleanConf], type: CubaDeployment) {
@@ -170,7 +173,7 @@ configure(webModule) {
     task deployConf(type: Copy) {
         from file('src')
         include "de/diedavids/cuba/ceut/**"
-        into "$cuba.tomcat.dir/conf/${modulePrefix}"
+        into "$cuba.appHome/${modulePrefix}/conf"
     }
 
     task clearMessagesCache(type: CubaClearMessagesCache) {
@@ -178,15 +181,8 @@ configure(webModule) {
     }
     deployConf.dependsOn clearMessagesCache
 
-    task cleanConf(description: 'Cleans up conf directory') {
-        doLast {
-            def dir = new File(cuba.tomcat.dir, "/conf/${modulePrefix}")
-            if (dir.isDirectory()) {
-                ant.delete(includeemptydirs: true) {
-                    fileset(dir: dir, includes: '**/*', excludes: 'local.app.properties')
-                }
-            }
-        }
+    task cleanConf(description: 'Cleans up conf directory', type: Delete) {
+        delete "$cuba.appHome/${modulePrefix}/conf"
     }
 
     task deploy(dependsOn: [assemble, cleanConf], type: CubaDeployment) {
@@ -212,7 +208,7 @@ task restart(dependsOn: ['stop', ":${modulePrefix}-core:deploy", ":${modulePrefi
                 socket(server: 'localhost', port: '8787')
             }
         }
-        start.execute()
     }
 }
+restart.finalizedBy start
 
